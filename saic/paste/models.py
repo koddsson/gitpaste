@@ -8,9 +8,10 @@ import timezone
 
 from datetime import datetime
 
-from saic.settings import generate_icon
+from settings import generate_icon
 
 timezones = [(tz, tz) for tz in pytz.common_timezones]
+
 
 class DateTimeFieldTZ(models.DateTimeField):
     def __init__(self, *args, **kwargs):
@@ -22,7 +23,8 @@ class DateTimeFieldTZ(models.DateTimeField):
             setattr(model_instance, self.attname, value)
             return value
         else:
-            return super(models.DateTimeField, self).pre_save(model_instance, add)
+            return super(models.DateTimeField, self).pre_save(
+                model_instance, add)
 
     def get_prep_value(self, value):
         value = self.to_python(value)
@@ -37,7 +39,9 @@ class Set(models.Model):
     owner = models.ForeignKey(User, null=True, blank=True, default=None)
     description = models.CharField(max_length=255)
     repo = models.CharField(max_length=100)
-    fork = models.ForeignKey('Commit', null=True, blank=True, default=None, on_delete=models.SET_NULL)
+    fork = models.ForeignKey(
+        'Commit', null=True, blank=True, default=None,
+        on_delete=models.SET_NULL)
     private = models.BooleanField(default=False)
     anyone_can_edit = models.BooleanField(default=False)
     private_key = models.CharField(max_length=30)
@@ -136,8 +140,9 @@ class Preference(models.Model):
     user = models.OneToOneField(User, unique=True)
     mask_email = models.BooleanField(default=False)
     masked_email = models.CharField(max_length=256)
-    default_anonymous = models.BooleanField()
-    timezone = models.CharField(blank=True, choices=timezones, default='UTC', max_length=20)
+    default_anonymous = models.BooleanField(default=True)
+    timezone = models.CharField(
+        blank=True, choices=timezones, default='UTC', max_length=20)
     gravatar = models.URLField(blank=True)
 
     @property
@@ -157,12 +162,12 @@ def get_or_create_preference(user):
         try:
             at, email = str(user.email).split('@')
             masked_email = '%s%s@%s' % (at[:2], len(at[2:]) * '*', email)
-        except ValueError, e:
+        except ValueError:
             email = user.username
             masked_email = ''
         return Preference.objects.create(
-                user=user, masked_email=masked_email, 
-                gravatar=generate_icon(user.email)
+            user=user, masked_email=masked_email,
+            gravatar=generate_icon(user.email)
         )
     return preference
 

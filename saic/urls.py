@@ -1,4 +1,4 @@
-from django.conf.urls.defaults import patterns, include, url
+from django.conf.urls import patterns, url, include
 from django.views.generic import RedirectView
 
 from django.contrib import admin
@@ -15,5 +15,5 @@ urlpatterns = patterns('',
         'django.contrib.auth.views.password_reset_confirm'),
     (r'^reset/done/$', 'django.contrib.auth.views.password_reset_complete'),
     (r'^search/', include('haystack.urls')),
-    url(r'^', include('saic.paste.urls')),
+    url(r'^', include('paste.urls')),
 )

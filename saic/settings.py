@@ -1,5 +1,7 @@
 import os
 
+TEST_RUNNER = 'django.test.runner.DiscoverRunner'
+
 ALLOW_ANONYMOUS_POSTS = True
 ALLOW_ANONYMOUS_ACCESS = True
 
@@ -130,11 +132,11 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'saic.paste.middleware.TimezoneMiddleware',
+    'paste.middleware.TimezoneMiddleware',
 )
 
-ROOT_URLCONF = 'saic.urls'
-ROOTDIR = os.path.abspath(os.path.dirname(__file__)) 
+ROOT_URLCONF = 'urls'
+ROOTDIR = os.path.abspath(os.path.dirname(__file__))
 
 TEMPLATE_DIRS = (
         os.sep.join([ROOTDIR, 'templates']),
@@ -148,8 +150,8 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
-    'django.contrib.markup',
-    'saic.paste',
+    'markdown_deux',
+    'paste',
     'django.contrib.admin',
     'django.contrib.admindocs',
     'haystack',
@@ -163,15 +165,24 @@ INSTALLED_APPS = (
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        },
+    },
     'handlers': {
-        'mail_admins': {
-            'level': 'ERROR',
-            'class': 'django.utils.log.AdminEmailHandler'
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
         }
     },
     'loggers': {
         'django.request': {
-            'handlers': ['mail_admins'],
+            'handlers': ['console'],
             'level': 'ERROR',
             'propagate': True,
         },
@@ -186,7 +197,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
         'django.core.context_processors.media',
         'django.core.context_processors.static',
         'django.contrib.messages.context_processors.messages',
-        'saic.context_processors.use_tz',
-        'saic.context_processors.use_icon',
-        'saic.context_processors.site',
+        'context_processors.use_tz',
+        'context_processors.use_icon',
+        'context_processors.site',
 )
